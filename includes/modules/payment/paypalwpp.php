@@ -2828,10 +2828,13 @@ if (false) { // disabled until clarification is received about coupons in PayPal
         // restore cart contents
         $_SESSION['cart']->restore_contents();
         // eof: not require part of contents merge notice
-
+        $zc_check_basket_after = $_SESSION['cart']->count_contents();
+        if ($zc_check_basket_before > 0 && $zc_check_basket_before === $zc_check_basket_after) {
+            //  If contents still same set the cartID
+            $_SESSION['cartID'] = $_SESSION['cart']->cartID;
+        }
         // check current cart contents count if required
         if (SHOW_SHOPPING_CART_COMBINED > 0 && $zc_check_basket_before > 0) {
-          $zc_check_basket_after = $_SESSION['cart']->count_contents();
           if (($zc_check_basket_before != $zc_check_basket_after) && $_SESSION['cart']->count_contents() > 0 && SHOW_SHOPPING_CART_COMBINED > 0) {
             if (SHOW_SHOPPING_CART_COMBINED == 2) {
               // warning only do not send to cart
