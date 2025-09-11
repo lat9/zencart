@@ -61,7 +61,7 @@ if (!empty($action)) {
     }
 }
 
-$gID = $_GET['gID'] ?? 1;
+$gID = (int)($_GET['gID'] ?? 1);
 $_GET['gID'] = $gID;
 $cfg_group = $db->Execute(
     "SELECT configuration_group_title
@@ -97,6 +97,11 @@ if ($gID === 7) {
 } elseif ($gID === 6) {
     if (!zen_is_superuser()) {
         zen_redirect(zen_href_link(FILENAME_DENIED, '', 'SSL'));
+    }
+} elseif ($gID === 5) {
+    if (zen_get_configuration_key_value('CUSTOMERS_ACTIVATION_REQUIRED') === 'true') {
+        $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = '3' WHERE configuration_key = 'CUSTOMERS_APPROVAL_AUTHORIZATION'", 1);
+        $db->Execute("UPDATE " . TABLE_CONFIGURATION . " SET configuration_value = 'customers_authorization' WHERE configuration_key = 'CUSTOMERS_AUTHORIZATION_FILENAME'", 1);
     }
 }
 ?>

@@ -42,6 +42,7 @@ define('TABLE_COUPONS', DB_PREFIX . 'coupons');
 define('TABLE_COUPONS_DESCRIPTION', DB_PREFIX . 'coupons_description');
 define('TABLE_CURRENCIES', DB_PREFIX . 'currencies');
 define('TABLE_CUSTOMERS', DB_PREFIX . 'customers');
+define('TABLE_CUSTOMERS_AUTH_TOKENS', DB_PREFIX . 'customers_auth_tokens');
 define('TABLE_CUSTOMERS_BASKET', DB_PREFIX . 'customers_basket');
 define('TABLE_CUSTOMERS_BASKET_ATTRIBUTES', DB_PREFIX . 'customers_basket_attributes');
 define('TABLE_CUSTOMERS_INFO', DB_PREFIX . 'customers_info');
