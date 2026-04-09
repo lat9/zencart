@@ -138,9 +138,12 @@ function zen_include_language_file($file, $folder, $page)
         $languageLoader->loadExtraLanguageFiles(DIR_FS_CATALOG . DIR_WS_LANGUAGES,  $_SESSION['language'], $file, $folder);
     } else {
         if ($page === 'inline') {
+            if (!str_starts_with($lang_file, 'lang.')) {
+                $lang_file = 'lang.' . $lang_file;
+            }
 ?>
           <div class="messageStackCaution">
-             <?php echo WARNING_COULD_NOT_LOCATE_LANG_FILE . $lang_file; ?>
+            <?php echo WARNING_COULD_NOT_LOCATE_LANG_FILE . $lang_file; ?>
           </div>
 <?php
         } else {

@@ -106,6 +106,9 @@ class payment
 
             if (!$languageLoader->loadModuleLanguageFile($next_module['file'], 'payment')) {
                 $lang_file = zen_get_file_directory(DIR_WS_LANGUAGES . $_SESSION['language'] . '/modules/payment/', $next_module['file'], 'false');
+                if (!str_starts_with($lang_file, 'lang.')) {
+                    $lang_file = 'lang.' . $lang_file;
+                }
                 if (is_object($messageStack)) {
                     if (IS_ADMIN_FLAG === false) {
                         $messageStack->add('checkout_payment', WARNING_COULD_NOT_LOCATE_LANG_FILE . $lang_file, 'caution');
