@@ -106,8 +106,13 @@ class payment
 
             if (!$languageLoader->loadModuleLanguageFile($next_module['file'], 'payment')) {
                 $lang_file = zen_get_file_directory(DIR_WS_LANGUAGES . $_SESSION['language'] . '/modules/payment/', $next_module['file'], 'false');
-                if (!str_starts_with($lang_file, 'lang.')) {
-                    $lang_file = 'lang.' . $lang_file;
+
+                // -----
+                // If the language file's name doesn't start with 'lang.' (which they do,
+                // as of zc300), add that prefix for the cautionary message.
+                //
+                if (!str_starts_with($next_module['file'], 'lang.')) {
+                    $lang_file = str_replace($lang_file, $next_module['file'], 'lang.' . $next_module['file']);
                 }
                 if (is_object($messageStack)) {
                     if (IS_ADMIN_FLAG === false) {

@@ -96,8 +96,12 @@ class shipping
                 $language_dir = (IS_ADMIN_FLAG === false) ? DIR_WS_LANGUAGES : (DIR_FS_CATALOG . DIR_WS_LANGUAGES);
                 $lang_file = zen_get_file_directory($language_dir . $_SESSION['language'] . '/modules/shipping/', $quote_module['file'], 'false');
 
-                if (!str_starts_with($lang_file, 'lang.')) {
-                    $lang_file = 'lang.' . $lang_file;
+                // -----
+                // If the language file's name doesn't start with 'lang.' (which they do,
+                // as of zc300), add that prefix for the cautionary message.
+                //
+                if (!str_starts_with($quote_module['file'], 'lang.')) {
+                    $lang_file = str_replace($lang_file, $quote_module['file'], 'lang.' . $quote_module['file']);
                 }
                 if (is_object($messageStack)) {
                     if (IS_ADMIN_FLAG === false) {
