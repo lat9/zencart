@@ -247,8 +247,11 @@ foreach ($configuration as $item) {
         <div class="col-md-3">
             <?php
             $cfgValue = htmlspecialchars($item['configuration_value'], ENT_COMPAT, CHARSET, true);
+            $original_value = zen_draw_hidden_field("original[$fieldName]", $cfgValue);
             if (empty($item['set_function'])) {
-                echo '<input type="text" name="configuration[' . $fieldName . ']" value="' . $cfgValue . '" class="form-control">';
+                echo '<input type="text" name="configuration[' . $fieldName . ']" value="' . $cfgValue . '" class="form-control">' . $original_value;
+            } elseif (!str_starts_with($item['set_function'], 'zen_cfg_')) {
+                echo $cfgValue;
             } else {
                 // use addslashes() instead of $cfgValue directly here.
                 $safe_value = addslashes($cfgValue);
@@ -263,10 +266,9 @@ foreach ($configuration as $item) {
                     $inputField = preg_replace('/id=[\'"]configuration_value[\'"]/', 'id="' . $fieldName . '"', $inputField);
                 }
 
-                echo $inputField;
+                echo $inputField . $original_value;
             }
             ?>
-            <?= zen_draw_hidden_field("original[$fieldName]", $cfgValue) ?>
         </div>
         <div class="col-md-6 bg-info p-3"><?= $item['configuration_description'] ?></div>
     </div>
