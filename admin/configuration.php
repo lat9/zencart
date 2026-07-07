@@ -250,7 +250,7 @@ foreach ($configuration as $item) {
             $original_value = zen_draw_hidden_field("original[$fieldName]", $cfgValue);
             if (empty($item['set_function'])) {
                 echo '<input type="text" name="configuration[' . $fieldName . ']" value="' . $cfgValue . '" class="form-control">' . $original_value;
-            } elseif (!str_starts_with($item['set_function'], 'zen_cfg_')) {
+            } elseif (!zen_is_safe_configuration_set_function($item['set_function'])) {
                 echo $cfgValue;
             } else {
                 // use addslashes() instead of $cfgValue directly here.

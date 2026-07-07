@@ -255,7 +255,7 @@ if ($action === 'layout' || $action === 'layout_edit') {
     if ($action === 'layout_edit') {
         $heading[] = ['text' => '<h4>' . $cInfo->configuration_title . '</h4>'];
 
-        if ($cInfo->set_function) {
+        if ($cInfo->set_function && zen_is_safe_configuration_set_function($cInfo->set_function)) {
             eval('$value_field = ' . $cInfo->set_function . '"' . htmlspecialchars($cInfo->configuration_value, ENT_COMPAT, CHARSET, TRUE) . '");');
         } else {
             $value_field = zen_draw_input_field('configuration_value', htmlspecialchars($cInfo->configuration_value, ENT_COMPAT, CHARSET, TRUE), 'size="60"');

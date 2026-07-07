@@ -853,3 +853,17 @@ function zen_get_customer_email_from_id(int|string $cid): string
     $query = $db->Execute("SELECT customers_email_address FROM " . TABLE_CUSTOMERS . " WHERE customers_id = " . (int)$cid);
     return ($query->EOF) ? '' : $query->fields['customers_email_address'];
 }
+
+/**
+ * Validates a `set_function` value sourced from the `configuration` table before
+ * it's eval()'d to build a config-page input field.
+ *
+ * @since ZC v3.0.0
+ */
+function zen_is_safe_configuration_set_function(string $set_function): bool
+{
+    if (!preg_match('/^(zen_cfg_[a-zA-Z0-9_]+)\($/', $set_function, $matches)) {
+        return false;
+    }
+    return function_exists($matches[1]);
+}
