@@ -862,7 +862,7 @@ function zen_get_customer_email_from_id(int|string $cid): string
  */
 function zen_is_safe_configuration_set_function(string $set_function): bool
 {
-    if (!preg_match('/^(zen_cfg_[a-zA-Z0-9_]+)\($/', $set_function, $matches)) {
+    if (!preg_match('/^(zen_cfg_[a-zA-Z0-9_]+)\(.+$/', $set_function, $matches)) {
         return false;
     }
     return function_exists($matches[1]);
