@@ -26,20 +26,8 @@ if (zen_is_logged_in()) {
     }
 
     if (!zen_is_customer_password_session_valid()) {
-        global $messageStack, $customer;
-
         $_SESSION['cart']->reset(false);
         $customer->forceLogout();
-        unset(
-            $_SESSION['customer_password_hash'],
-            $_SESSION['customers_email_address'],
-            $_SESSION['customer_first_name'],
-            $_SESSION['customer_last_name'],
-            $_SESSION['customer_default_address_id'],
-            $_SESSION['customer_country_id'],
-            $_SESSION['customer_zone_id'],
-            $_SESSION['customers_authorization']
-        );
         $messageStack->add_session('header', ERROR_SESSION_INVALID_DUE_TO_PASSWORD_CHANGE, 'warning');
         zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
     }
@@ -85,7 +73,6 @@ if (zen_is_logged_in()) {
     $_SESSION['customers_authorization'] = (string)$customer->getData('customers_authorization');
     if ((int)$_SESSION['customers_authorization'] !== 0 && in_array($_GET['main_page'], [FILENAME_CHECKOUT_SHIPPING, FILENAME_CHECKOUT_PAYMENT, FILENAME_CHECKOUT_CONFIRMATION])) {
         // this account is not valid for checkout
-        global $messageStack;
         $messageStack->add_session('header', TEXT_AUTHORIZATION_PENDING_CHECKOUT, 'caution');
         zen_redirect(zen_href_link(FILENAME_DEFAULT));
     }
