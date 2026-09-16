@@ -16,7 +16,9 @@ if (!defined('IS_ADMIN_FLAG')) {
  * an administrator has deleted the customer (managing spam etc) so we'll log them out.
  */
 if (zen_is_logged_in()) {
-    $customer = new Customer($_SESSION['customer_id']);
+    // Address data is loaded on first use, so this per-request instance costs one query on
+    // pages that never read an address (including ajax and handler requests).
+    $customer = new Customer($_SESSION['customer_id'], load_addresses: false);
     if ($customer->getData('customers_id') === null) {
         $_SESSION['cart']->reset(true);
         zen_session_destroy();
