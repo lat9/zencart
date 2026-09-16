@@ -16,7 +16,9 @@ if (!defined('IS_ADMIN_FLAG')) {
  * an administrator has deleted the customer (managing spam etc) so we'll log them out.
  */
 if (zen_is_logged_in()) {
-    $customer = new Customer($_SESSION['customer_id']);
+    // Address data is loaded on first use, so this per-request instance costs one query on
+    // pages that never read an address (including ajax and handler requests).
+    $customer = new Customer($_SESSION['customer_id'], load_addresses: false);
     if ($customer->getData('customers_id') === null) {
         $_SESSION['cart']->reset(true);
         zen_session_destroy();
@@ -24,20 +26,8 @@ if (zen_is_logged_in()) {
     }
 
     if (!zen_is_customer_password_session_valid()) {
-        global $messageStack, $customer;
-
         $_SESSION['cart']->reset(false);
         $customer->forceLogout();
-        unset(
-            $_SESSION['customer_password_hash'],
-            $_SESSION['customers_email_address'],
-            $_SESSION['customer_first_name'],
-            $_SESSION['customer_last_name'],
-            $_SESSION['customer_default_address_id'],
-            $_SESSION['customer_country_id'],
-            $_SESSION['customer_zone_id'],
-            $_SESSION['customers_authorization']
-        );
         $messageStack->add_session('header', ERROR_SESSION_INVALID_DUE_TO_PASSWORD_CHANGE, 'warning');
         zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
     }
@@ -72,6 +62,10 @@ if (zen_config('DOWN_FOR_MAINTENANCE') === 'true' && !zen_is_whitelisted_admin_i
  * be valid.
  */
 if (zen_is_logged_in()) {
+    //- Backward compatibility, session value's a string. Refreshed before the banned check so
+    //- that NOTIFY_LOGIN_BANNED observers see the current status.
+    $_SESSION['customers_authorization'] = (string)$customer->getData('customers_authorization');
+
     if ($customer->isBanned()) {
         // this account is banned
         $zco_notifier->notify('NOTIFY_LOGIN_BANNED');
@@ -79,11 +73,8 @@ if (zen_is_logged_in()) {
         zen_redirect(zen_href_link(FILENAME_LOGIN));
     }
 
-    //- Backward compatibility, session value's a string.
-    $_SESSION['customers_authorization'] = (string)$customer->getData('customers_authorization');
     if ((int)$_SESSION['customers_authorization'] !== 0 && in_array($_GET['main_page'], [FILENAME_CHECKOUT_SHIPPING, FILENAME_CHECKOUT_PAYMENT, FILENAME_CHECKOUT_CONFIRMATION])) {
         // this account is not valid for checkout
-        global $messageStack;
         $messageStack->add_session('header', TEXT_AUTHORIZATION_PENDING_CHECKOUT, 'caution');
         zen_redirect(zen_href_link(FILENAME_DEFAULT));
     }
@@ -127,7 +118,7 @@ switch (true) {
     /**
      * check store status before authorizations
      */
-    case (zen_config('STORE_STATUS') !== '0'):
+    case (zen_config('STORE_STATUS', '0') !== '0'):
         break;
 
     /**
@@ -142,7 +133,7 @@ switch (true) {
                 $_GET['set_session_login'] = 'true';
                 $_SESSION['navigation']->set_snapshot();
             }
-            zen_redirect(zen_href_link(FILENAME_LOGIN));
+            zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
         }
         break;
 
@@ -170,7 +161,7 @@ switch (true) {
     /**
      * check store status before authorizations
      */
-    case (zen_config('STORE_STATUS') !== '0'):
+    case (zen_config('STORE_STATUS', '0') !== '0'):
         break;
 
     case (zen_config('CUSTOMERS_APPROVAL_AUTHORIZATION') === '1' && !zen_is_logged_in()):
