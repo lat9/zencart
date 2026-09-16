@@ -62,6 +62,10 @@ if (zen_config('DOWN_FOR_MAINTENANCE') === 'true' && !zen_is_whitelisted_admin_i
  * be valid.
  */
 if (zen_is_logged_in()) {
+    //- Backward compatibility, session value's a string. Refreshed before the banned check so
+    //- that NOTIFY_LOGIN_BANNED observers see the current status.
+    $_SESSION['customers_authorization'] = (string)$customer->getData('customers_authorization');
+
     if ($customer->isBanned()) {
         // this account is banned
         $zco_notifier->notify('NOTIFY_LOGIN_BANNED');
@@ -69,8 +73,6 @@ if (zen_is_logged_in()) {
         zen_redirect(zen_href_link(FILENAME_LOGIN));
     }
 
-    //- Backward compatibility, session value's a string.
-    $_SESSION['customers_authorization'] = (string)$customer->getData('customers_authorization');
     if ((int)$_SESSION['customers_authorization'] !== 0 && in_array($_GET['main_page'], [FILENAME_CHECKOUT_SHIPPING, FILENAME_CHECKOUT_PAYMENT, FILENAME_CHECKOUT_CONFIRMATION])) {
         // this account is not valid for checkout
         $messageStack->add_session('header', TEXT_AUTHORIZATION_PENDING_CHECKOUT, 'caution');
