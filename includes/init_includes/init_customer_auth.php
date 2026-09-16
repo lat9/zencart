@@ -118,7 +118,7 @@ switch (true) {
     /**
      * check store status before authorizations
      */
-    case (zen_config('STORE_STATUS') !== '0'):
+    case (zen_config('STORE_STATUS', '0') !== '0'):
         break;
 
     /**
@@ -133,7 +133,7 @@ switch (true) {
                 $_GET['set_session_login'] = 'true';
                 $_SESSION['navigation']->set_snapshot();
             }
-            zen_redirect(zen_href_link(FILENAME_LOGIN));
+            zen_redirect(zen_href_link(FILENAME_LOGIN, '', 'SSL'));
         }
         break;
 
@@ -161,7 +161,7 @@ switch (true) {
     /**
      * check store status before authorizations
      */
-    case (zen_config('STORE_STATUS') !== '0'):
+    case (zen_config('STORE_STATUS', '0') !== '0'):
         break;
 
     case (zen_config('CUSTOMERS_APPROVAL_AUTHORIZATION') === '1' && !zen_is_logged_in()):
